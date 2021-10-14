@@ -1284,6 +1284,9 @@ class Table{
 			url   : this.param.config.data,
 			param : this.get,
 			then  : (data) => {
+				if (_.isFunction(that.param.config.response)){
+                	data = that.param.config.response(data);
+				}
 				run(data);
 			}
 		});
