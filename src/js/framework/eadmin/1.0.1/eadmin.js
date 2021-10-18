@@ -815,7 +815,11 @@ let eadmin = class Eadmin{
                 break;
             }
         }).
-        catch((e) => {console.log(e);});
+        catch((e) => {
+            console.log(e);
+            if (_.isFunction(param.error))
+                param.error();
+        });
     }
 
     /**

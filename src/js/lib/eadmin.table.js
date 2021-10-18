@@ -1288,6 +1288,13 @@ class Table{
                 	data = that.param.config.response(data);
 				}
 				run(data);
+			},
+			error: ()=>{
+				let data = {
+					count : 0,
+					list  : []
+				};
+				run(data);
 			}
 		});
 	}
