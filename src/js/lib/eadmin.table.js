@@ -761,13 +761,53 @@ class Table{
 			if (v.btn.api != undefined)
 			{
 				let run = () => {
-					Eadmin.get({
-						url   : v.btn.api,
-						popup : true,
-						then  : () => {
-							if (v.btn.refresh === true) that._loadData();
-						}
-					});
+					if (v.btn.method === 'POST') {
+						Eadmin.post({
+							url: v.btn.api,
+							form: v.btn.form,
+							then: (resp) => {
+								if (_.isFunction(v.btn.callback)) {
+									v.btn.callback(resp);
+								}
+								if (v.btn.refresh === true) that._loadData();
+							}
+						})
+					} else if (v.btn.method === 'PUT') {
+						Eadmin.put({
+							url: v.btn.api,
+							form: v.btn.form,
+							then: (resp) => {
+								if (_.isFunction(v.btn.callback)) {
+									v.btn.callback(resp);
+								}
+								if (v.btn.refresh === true) that._loadData();
+							}
+						})
+					} else if (v.btn.method === 'DELETE') {
+						Eadmin.delete({
+							url: v.btn.api,
+							param: v.btn.form,
+							popup: true,
+							then: (resp) => {
+								if (_.isFunction(v.btn.callback)) {
+									v.btn.callback(resp);
+								}
+								if (v.btn.refresh === true) that._loadData();
+							}
+						})
+					} else {
+						Eadmin.get({
+							url: v.btn.api,
+							resType: v.btn.resType,
+							popup: true,
+							then: (resp) => {
+								if (_.isFunction(v.btn.callback)) {
+									v.btn.callback(resp);
+								}
+								if (v.btn.refresh === true) that._loadData();
+							}
+						});
+					}
 				};
 				if (v.btn.confirm === true)
 				{

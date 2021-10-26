@@ -735,7 +735,13 @@ let eadmin = class Eadmin{
         }
         if (param.param == undefined)
             param.param = {};
+        let resType = '';
+        if (param.resType != undefined)
+        {
+            resType = param.resType;
+        }
         axios.get(param.url, {
+            responseType: resType,
             params : param.param
         }).
         then((response) => {
@@ -883,7 +889,7 @@ let eadmin = class Eadmin{
             }
             if (data.remind == 'no')
             {
-                if (conf.callback != undefined) 
+                if (conf.callback != undefined)
                     conf.callback();
                 return;
             }
@@ -894,14 +900,14 @@ let eadmin = class Eadmin{
                         title : '消息提醒',
                         desc  : msg
                     });
-                    if (conf.callback != undefined) 
+                    if (conf.callback != undefined)
                         conf.callback();
                 break;
                 case 'message':
                     Message.success({
                         content : msg
                     });
-                    if (conf.callback != undefined) 
+                    if (conf.callback != undefined)
                         conf.callback();
                 break;
                 case 'popup':
@@ -916,6 +922,200 @@ let eadmin = class Eadmin{
                 param.error();
         });
     }
+
+    /**
+     * 发送DELETE请求
+     */
+    delete(param = {})
+    {
+        if (param.url == undefined)
+        {
+            console.log('请指定接口地址');
+            return;
+        }
+        if (param.param == undefined)
+            param.param = {};
+        axios.delete(param.url, {
+            params : param.param
+        }).
+        then((response) => {
+            let data;
+            if (_.isFunction(module.conf.http.response))
+                data = module.conf.http.response(response.data);
+            else
+                data = response.data;
+            // 没有执行码
+            if (data[module.conf.http.code_field] == undefined)
+            {
+                console.log('接口返回结果中没有找到定义的code码字段');
+                return;
+            }
+            let msg = '';
+            if (data[module.conf.http.msg_field] != undefined)
+                msg = data[module.conf.http.msg_field];
+            // 执行失败
+            if (data[module.conf.http.code_field] != module.conf.http.code_success)
+            {
+                if (msg == '') msg = '操作执行失败';
+                Message.error({
+                    content : msg
+                });
+                if (_.isFunction(param.error))
+                    param.error();
+                return;
+            }
+            if (param.popup !== true)
+            {
+                if (_.isFunction(param.then))
+                    param.then(data[module.conf.http.data_field]);
+                return;
+            }
+            msg = msg || '操作执行成功';
+            // 提示
+            let conf = {content : msg};
+            if (_.isFunction(param.then))
+            {
+                conf.callback = () => {
+                    param.then(data);
+                };
+            }
+            // 自定义提醒模式
+            if (data.remind == undefined)
+            {
+                conf.submit = conf.callback;
+                Popup.success(conf);
+                return;
+            }
+            if (data.remind == 'no')
+            {
+                if (conf.callback != undefined)
+                    conf.callback();
+                return;
+            }
+            switch (data.remind)
+            {
+                case 'notice':
+                    Notice.success({
+                        title : '消息提醒',
+                        desc  : msg
+                    });
+                    if (conf.callback != undefined)
+                        conf.callback();
+                break;
+                case 'message':
+                    Message.success({
+                        content : msg
+                    });
+                    if (conf.callback != undefined)
+                        conf.callback();
+                break;
+                case 'popup':
+                    conf.submit = conf.callback;
+                    Popup.success(conf);
+                break;
+            }
+        }).
+        catch((e) => {
+            console.log(e);
+            if (_.isFunction(param.error))
+                param.error();
+        });
+    }
+
+     /**
+     * 发送PUT请求
+     */
+      put(param = {})
+      {
+          if (param.url == undefined)
+          {
+              console.log('请指定接口地址');
+              return;
+          }
+          if (param.form == undefined)
+          {
+              console.log('请指定需要提交的PUT数据');
+              return;
+          }
+          axios.post(param.url, param.form, module.conf.http.headers).
+          then((response) => {
+              let data;
+              if (_.isFunction(module.conf.http.response))
+                  data = module.conf.http.response(response.data);
+              else
+                  data = response.data;
+              if (data[module.conf.http.code_field] == undefined)
+              {
+                  console.log('接口返回结果中没有找到定义的code码字段');
+                  return;
+              }
+              let msg = '';
+              if (data[module.conf.http.msg_field] != undefined)
+                  msg = data[module.conf.http.msg_field];
+              // 执行失败
+              if (data[module.conf.http.code_field] != module.conf.http.code_success)
+              {
+                  msg = msg || '操作执行失败';
+                  Message.error({
+                      content : msg
+                  });
+                  if (_.isFunction(param.error))
+                      param.error(data);
+                  return;
+              }
+              if (_.isFunction(param.close))
+                  param.close();
+              msg = msg || '操作执行成功';
+              // 提示
+              let conf = {content : msg};
+              if (_.isFunction(param.then))
+              {
+                  conf.callback = () => {
+                      param.then(data);
+                  };
+              }
+              // 自定义提醒模式
+              if (data.remind == undefined)
+              {
+                  conf.submit = conf.callback;
+                  Popup.success(conf);
+                  return;
+              }
+              if (data.remind == 'no')
+              {
+                  if (conf.callback != undefined)
+                      conf.callback();
+                  return;
+              }
+              switch (data.remind)
+              {
+                  case 'notice':
+                      Notice.success({
+                          title : '消息提醒',
+                          desc  : msg
+                      });
+                      if (conf.callback != undefined)
+                          conf.callback();
+                  break;
+                  case 'message':
+                      Message.success({
+                          content : msg
+                      });
+                      if (conf.callback != undefined)
+                          conf.callback();
+                  break;
+                  case 'popup':
+                      conf.submit = conf.callback;
+                      Popup.success(conf);
+                  break;
+              }
+          }).
+          catch((error) => {
+              console.log(error);
+              if (_.isFunction(param.error))
+                  param.error();
+          });
+      }
 
 }
 

@@ -21,7 +21,7 @@ gulp.task('dev', [
         server: {
             baseDir: './dist'
         },
-        browser: 'chrome'
+        browser: 'msedge'
     });
     // 编译类库
     gulp.watch([
@@ -47,7 +47,7 @@ gulp.task('run', [], function() {
         server: {
             baseDir: './dist'
         },
-        browser: 'chrome'
+        browser: 'msedge'
     });
 });
 
