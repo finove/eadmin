@@ -1090,9 +1090,13 @@ class Table{
 							`table-column-btn-${row_key}-${btn_key}`
 						];
 						let disabled = b.disabled === true ? ' disabled' : '';
+						let btnTips = b.tips != undefined ? `data-tips="${b.tips}"` : '';
+						let btnTipsPos = b.tipsPos != undefined ? `data-tips-position="${b.tipsPos}"` : '';
 						html += `<button 
 									id="${id}" 
 									${disabled}
+									${btnTips}
+									${btnTipsPos}
 									data-row="${row_key}" 
 									data-key="${btn_key}" 
 									class="small column-btn" 
