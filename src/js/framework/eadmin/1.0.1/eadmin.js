@@ -936,7 +936,8 @@ let eadmin = class Eadmin{
         if (param.param == undefined)
             param.param = {};
         axios.delete(param.url, {
-            params : param.param
+            params : param.param,
+            data: param.form
         }).
         then((response) => {
             let data;

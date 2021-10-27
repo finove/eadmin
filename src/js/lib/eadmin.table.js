@@ -295,7 +295,7 @@ class Table{
 					}
 					html += `</div></div>`;
 				});
-				html += `<div class="col-3">
+				html += `<div>
 							<button class="search-do hl middle">
 								<i class="ri-search-line"></i>搜索
 							</button><button class="search-refresh middle">
@@ -786,7 +786,8 @@ class Table{
 					} else if (v.btn.method === 'DELETE') {
 						Eadmin.delete({
 							url: v.btn.api,
-							param: v.btn.form,
+							form: v.btn.form,
+							param: v.btn.param,
 							popup: true,
 							then: (resp) => {
 								if (_.isFunction(v.btn.callback)) {
