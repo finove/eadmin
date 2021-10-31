@@ -1038,7 +1038,7 @@ let eadmin = class Eadmin{
               console.log('请指定需要提交的PUT数据');
               return;
           }
-          axios.post(param.url, param.form, module.conf.http.headers).
+          axios.put(param.url, param.form, module.conf.http.headers).
           then((response) => {
               let data;
               if (_.isFunction(module.conf.http.response))
@@ -1112,9 +1112,9 @@ let eadmin = class Eadmin{
               }
           }).
           catch((error) => {
-              console.log(error);
+              console.log(error.response, error.message);
               if (_.isFunction(param.error))
-                  param.error();
+                  param.error(error);
           });
       }
 
