@@ -74,6 +74,19 @@ class Form{
 				}
 				$(`<span class="append">${v.append}</span>`).appendTo(_this.parent());
 			}
+			// 后方带图标按钮，可执行动作
+			v.btn = _this.data('btn');
+			v.btnhits = _this.data('btntips');
+			if (v.btnhits != undefined) v.btnhits = `data-tips="${v.btnhits}"`
+			if (v.btn != undefined) {
+				v.html = `<span ${v.btnhits} style="cursor: pointer;border-left: none; border-top-right-radius: 4px; border-bottom-right-radius: 4px;">
+							<i class="${v.btn} btnact"></i>
+						</span>`;
+				_this.before(`<div class="input-group"></div>`);
+				v.group = _this.prev('.input-group');
+				_this.appendTo(v.group);
+				$(v.html).appendTo(v.group);
+			}
 			// 带数字加减功能的文本框
 			if (v.numinput)
 			{
@@ -577,6 +590,25 @@ class Form{
 				prev().
 				val(v.val);
 		}).
+		on('click', ".btnact", function(){
+			let _this = $(this);
+			let v = {
+				input: _this.parent().prev()
+			};
+			v.btnact = v.input.data('btnact');
+			if (v.btnact == undefined) return;
+			try {
+				Method != undefined;
+				if (!_.isFunction(Method[v.btnact])) {
+					console.log('指定的' + v.btnact + '不是一个可被调用的函数');
+					return;
+				}
+				Method[v.btnact](_this);
+			}
+			catch (e) {
+				console.log(e);
+			}
+		}).
 		// 数字加减框
 		on('click', dom[3], function(){
 			let _this = $(this);
@@ -634,6 +666,7 @@ class Form{
 		// 单选按钮
 		on('click', dom[4], function(){
 			let [_this, v] = [$(this), {}];
+			let _do   = _this.data('do');
 			v.radio = _this.parent();
 			v.icon  = [
 				'ri-radio-button-line',
@@ -649,6 +682,18 @@ class Form{
 					attr('class', 'radio-checked-tag').
 					siblings('.radio-checked-tag').
 					attr('class', 'radio-tag');
+				if (_do == undefined) return;
+				try {
+					Method != undefined;
+					if (!_.isFunction(Method[_do])) {
+						console.log('指定的' + _do + '不是一个可被调用的函数');
+						return;
+					}
+					Method[_do](_this);
+				}
+				catch (e) {
+					console.log(e);
+				}
 				return;
 			}
 			v.radio.
